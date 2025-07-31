@@ -16,7 +16,7 @@ The AI agent only gets the context you are appending to the PRP and training dat
 
 2. **External Research**
    - Search for similar features/patterns online
-   - Library documentation (include specific URLs)
+   - Library documentation (include specific URLs or use the context7 MCP)
    - Implementation examples (GitHub/StackOverflow/blogs)
    - Best practices and common pitfalls
 
