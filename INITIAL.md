@@ -19,16 +19,8 @@
 - [ ] Feature 3: [Description of your third core feature]
 - [ ] [Add more features as needed for your specific SaaS]
 
-### Billing & Subscription (Optional for MVP)
-- [ ] Stripe integration
-- [ ] Subscription plans
-- [ ] Payment history
-- [ ] Invoice generation
-
-### Admin Dashboard
-- [ ] User management
-- [ ] Analytics/metrics
-- [ ] System settings
+### Billing & Subscription (POST-MVP)
+ - NO Billing
 
 ## 🏗️ TECHNICAL ARCHITECTURE:
 
@@ -36,20 +28,22 @@
 
 ### Frontend (Next.js)
 - **Framework**: Next.js 15+ with App Router
-- **Styling**: Tailwind CSS
+- **Styling**: Tailwind CSS (DONT USE SHADCNUI)
 - **State Management**: Zustand or React Context
 - **Forms**: React Hook Form + Zod validation
-- **API Client**: Axios or Fetch with custom hooks
+- **API Client**: Fetch with custom hooks (no axios)
 - **Authentication**: NextAuth.js or custom JWT implementation
 
 ### Backend (FastAPI)
-- **Framework**: FastAPI 0.115+ with Uvicorn ASGI server
-- **Authentication**: JWT with `python-jose` or FastAPI Users
-- **Database**: PostgreSQL 16+ with SQLAlchemy 2.0+ ORM
-- **Migrations**: Alembic
-- **Validation**: Pydantic 2.0+ models
+- **Framework**: FastAPI 0.115+ with Pydantic
+- **Authentication**: JWT with FastAPI dependencies
+- **Database**: PostgreSQL 16+ with SQLAlchemy 2.0
+- **Migrations**: Alembic (SQLAlchemy's migration tool)
+- **Validation**: Pydantic models for request/response
+- **API Documentation**: Automatic OpenAPI/Swagger docs
+- **Async Support**: Full async/await support
 - **Caching**: Redis (optional for MVP)
-- **Task Queue**: Celery or Dramatiq (optional for MVP)
+- **Task Queue**: Celery or FastAPI Background Tasks (optional for MVP)
 
 ### Infrastructure (Docker)
 - **Development**: Docker Compose with hot-reload
@@ -73,32 +67,40 @@ project-root/
 ├── backend/               # FastAPI application
 │   ├── app/              # Main application package
 │   │   ├── __init__.py
-│   │   ├── main.py       # FastAPI app instance
-│   │   ├── config.py     # Configuration settings
-│   │   ├── database.py   # Database connection
-│   │   ├── dependencies/ # Shared dependencies
-│   │   ├── routers/      # API endpoints
-│   │   ├── models/       # SQLAlchemy models
-│   │   ├── schemas/      # Pydantic schemas
-│   │   └── services/     # Business logic
+│   │   ├── main.py       # FastAPI application entry point
+│   │   ├── config.py     # Application configuration
+│   │   ├── dependencies.py # Shared dependencies
+│   │   ├── models/       # SQLAlchemy database models
+│   │   │   ├── __init__.py
+│   │   │   ├── user.py   # User model
+│   │   │   └── base.py   # Base model class
+│   │   ├── schemas/      # Pydantic models for API
+│   │   │   ├── __init__.py
+│   │   │   ├── user.py   # User schemas
+│   │   │   └── auth.py   # Authentication schemas
+│   │   ├── routers/      # API route handlers
+│   │   │   ├── __init__.py
+│   │   │   ├── auth.py   # Authentication routes
+│   │   │   └── users.py  # User management routes
+│   │   ├── services/     # Business logic layer
+│   │   │   ├── __init__.py
+│   │   │   ├── auth.py   # Authentication service
+│   │   │   └── user.py   # User service
+│   │   └── database.py   # Database configuration
 │   ├── alembic/          # Database migrations
+│   │   ├── versions/     # Migration files
+│   │   └── env.py        # Alembic environment
 │   ├── tests/            # Test suite
+│   │   ├── __init__.py
+│   │   ├── conftest.py   # Pytest configuration
+│   │   ├── test_auth.py  # Authentication tests
+│   │   └── test_users.py # User tests
+│   ├── alembic.ini       # Alembic configuration
 │   └── requirements.txt  # Python dependencies
 ├── docker-compose.yml     # Docker services
 ├── .env.example          # Environment variables template
 └── README.md             # Project documentation
 ```
-
-## 🔐 SECURITY CONSIDERATIONS:
-
-- [ ] CORS configuration
-- [ ] CSRF protection
-- [ ] Rate limiting
-- [ ] Input validation
-- [ ] SQL injection prevention
-- [ ] XSS protection
-- [ ] Secure headers
-- [ ] Environment variables for secrets
 
 ## 📊 DATABASE SCHEMA:
 
@@ -118,29 +120,6 @@ User (Base model - keep and extend as needed)
   - Add fields specific to your business logic
 ```
 
-## 🧪 TESTING STRATEGY:
-
-### Backend Testing
-- Unit tests for schemas and services
-- Integration tests for API endpoints
-- Async test support with pytest-asyncio
-- Test coverage > 80%
-
-### Frontend Testing
-- Component tests with React Testing Library
-- Integration tests for API calls
-- E2E tests with Playwright (optional)
-
-## 🚢 DEPLOYMENT CONSIDERATIONS:
-
-- [ ] Environment configuration (dev/staging/prod)
-- [ ] CI/CD pipeline setup
-- [ ] Database migrations strategy
-- [ ] Static file serving
-- [ ] SSL certificates
-- [ ] Monitoring and logging
-- [ ] Backup strategy
-
 ## 📝 DEVELOPMENT WORKFLOW:
 
 1. **Initial Setup**:
@@ -153,7 +132,6 @@ User (Base model - keep and extend as needed)
 2. **Backend Development**:
    ```bash
    # Create initial migration
-   docker compose exec backend alembic init alembic
    docker compose exec backend alembic revision --autogenerate -m "Initial migration"
    docker compose exec backend alembic upgrade head
    
@@ -170,8 +148,9 @@ User (Base model - keep and extend as needed)
    - PostgreSQL at localhost:5432
    
 5. **API Documentation**:
-   - Swagger UI at http://localhost:8000/docs
-   - ReDoc at http://localhost:8000/redoc
+   - Interactive API docs (Swagger UI) at http://localhost:8000/docs
+   - Alternative API docs (ReDoc) at http://localhost:8000/redoc
+   - OpenAPI schema at http://localhost:8000/openapi.json
 
 ## ⚠️ COMMON PITFALLS TO AVOID:
 
@@ -186,8 +165,6 @@ User (Base model - keep and extend as needed)
 ## 🐳 DOCKER COMPOSE EXAMPLE:
 
 ```yaml
-version: '3.8'
-
 services:
   frontend:
     build:
@@ -256,6 +233,8 @@ volumes:
 
 - FastAPI Documentation: Use Context7 MCP for latest docs
 - SQLAlchemy Documentation: Use Context7 MCP for latest docs
+- Pydantic Documentation: Use Context7 MCP for latest docs
+- Alembic Documentation: Use Context7 MCP for latest docs
 - Next.js Documentation: Use Context7 MCP for latest docs
 - Docker Compose: Use Context7 MCP for latest docs
 - PostgreSQL: Use Context7 MCP for latest docs
